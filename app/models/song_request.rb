@@ -20,7 +20,7 @@ class SongRequest < ActiveRecord::Base
   def download_file
     self.status = 'Enqueued'
     self.save!
-    FileDownloader.enqueue_download(song_url, self)
+    Resque.enqueue(DownloadSong, self.id)
   end
 
   def enqueue!

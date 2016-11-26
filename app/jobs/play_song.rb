@@ -1,6 +1,7 @@
 class PlaySong
   @queue = Jukebox::Application.config.master_server_config['servername']
   RANDOM_ACCENTS = ['Veena', 'Vicki', 'Alex', 'Ting-Ting']
+  FORMAT = Jukebox::Application.config.master_server_config['song_format']
 
   def self.get_song_detail song_id
     SongRequest.find(song_id)
@@ -15,7 +16,7 @@ class PlaySong
   def self.actually_play_song song
     song.status = "Playing"
     song.save!
-    %x{#{player_command} songs/#{song.file_id}.m4a}
+    %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
     song.status = "Played"
     song.save!
   end
@@ -33,12 +34,12 @@ end
 
 class PlaySongPlayer < PlaySong
   def self.get_song_detail song_id
-    url = "http://#{Jukebox::Application.config.master_server_config['servername']}:3000/song_requests/#{song_id}.json"
+    url = "http://#{Jukebox::Application.config.master_server_config['servername']}/song_requests/#{song_id}.json"
     object = JSON.parse(Net::HTTP.get(URI.parse(url)))
     OpenStruct.new(object)
   end
 
   def self.actually_play_song song
-    %x{#{player_command} songs/#{song.file_id}.m4a}
+    %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
   end
 end

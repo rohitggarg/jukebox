@@ -1,6 +1,10 @@
-development: 
+development:
   servername: localhost
-production: 
+  download_queue: localhost
+  song_format: mp3
+production:
   servername: jukebox.local
+  download_queue: file.downloader
+  song_format: mp3
   other_players:
     - jukebox-player.local
