@@ -1,1 +1,1 @@
-Resque.redis = Jukebox::Application.config.master_server_config['servername']
+Resque.redis = ENV['REDIS_URL'] || Jukebox::Application.config.master_server_config['servername']
