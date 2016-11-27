@@ -16,6 +16,13 @@ class DownloadSong
   end
 
   def self.get_song_detail song_id
-    SongRequest.find(song_id)
+    song_request = SongRequest.find(song_id)
+    description_text = %x{youtube-dl --get-title --get-description #{song_request.song_url}}
+    if description_text.length > 255
+      song_request.description = description_text[0..240] + "..."
+    else
+      song_request.description = description_text
+    end
+    song_request
   end
 end
