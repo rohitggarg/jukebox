@@ -1,11 +1,9 @@
 class PlaySong
+  extend SongRequestHttp
+
   @queue = Jukebox::Application.config.master_server_config['servername']
   RANDOM_ACCENTS = ['Veena', 'Vicki', 'Alex', 'Ting-Ting']
   FORMAT = Jukebox::Application.config.master_server_config['song_format']
-
-  def self.get_song_detail song_id
-    SongRequest.find(song_id)
-  end
 
   def self.perform(song_id)
     song = get_song_detail song_id
@@ -15,10 +13,10 @@ class PlaySong
 
   def self.actually_play_song song
     song.status = SongRequest::STATUS[:playing]
-    song.save!
+    update song
     %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
     song.status = SongRequest::STATUS[:played]
-    song.save!
+    update song
   end
 
   def self.player_command
@@ -29,17 +27,5 @@ class PlaySong
   def self.say_command
     is_darwin = (/darwin/ =~ RUBY_PLATFORM) != nil
     is_darwin ? "say -v #{RANDOM_ACCENTS[rand(0..3)]}" : "espeak"
-  end
-end
-
-class PlaySongPlayer < PlaySong
-  def self.get_song_detail song_id
-    url = "http://#{Jukebox::Application.config.master_server_config['servername']}/song_requests/#{song_id}.json"
-    object = JSON.parse(Net::HTTP.get(URI.parse(url)))
-    OpenStruct.new(object)
-  end
-
-  def self.actually_play_song song
-    %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
   end
 end

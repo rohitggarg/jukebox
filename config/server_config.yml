@@ -2,9 +2,11 @@ development:
   servername: localhost
   download_queue: localhost
   song_format: mp3
+  players:
+    - localhost
 production:
   servername: rg-jukebox.herokuapp.com
   download_queue: file.downloader
   song_format: mp3
-  other_players:
-    - jukebox-player.local
+  players:
+    - jukebox.player
