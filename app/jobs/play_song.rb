@@ -14,10 +14,10 @@ class PlaySong
   end
 
   def self.actually_play_song song
-    song.status = "Playing"
+    song.status = SongRequest::STATUS[:playing]
     song.save!
     %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
-    song.status = "Played"
+    song.status = SongRequest::STATUS[:played]
     song.save!
   end
 

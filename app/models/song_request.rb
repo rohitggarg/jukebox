@@ -1,4 +1,13 @@
 class SongRequest < ActiveRecord::Base
+  STATUS = {
+    new: 'N',
+    enqueued: 'A',
+    error: 'E',
+    will_be_played: 'W',
+    downloaded: 'D',
+    playing: 'P',
+    played: 'F'
+  }
   validates_presence_of :dedicated_to, :song_url, :message, :requestor
   validates_format_of :song_url, :with => /(http|https):\/\/www[.]youtube[.]com\/watch[?]v=.*/ix
 
@@ -8,21 +17,25 @@ class SongRequest < ActiveRecord::Base
   
   def set_fields
     self.file_id = self.song_url.gsub(/http(s)?:\/\/www[.]youtube[.]com\//,"").gsub("/","_").gsub("watch?v=","").split("&").first
-    self.status = 'New'
+    self.status = STATUS[:new]
   end
 
   def download_file
-    self.status = 'Enqueued'
+    self.status = STATUS[:enqueued]
     self.save!
     Resque.enqueue(DownloadSong, self.id)
   end
 
   def enqueue!
-    self.status = 'Will be played'
+    self.status = STATUS[:will_be_played]
     self.save!
     Resque.enqueue(PlaySong, self.id)
     Jukebox::Application.config.master_server_config['other_players'].each do | player_name |
       Resque.enqueue_to(player_name, PlaySongPlayer, self.id)
     end if Jukebox::Application.config.master_server_config['other_players'].present?
+  end
+
+  def status_display
+    STATUS.key(self.status).to_s.capitalize
   end
 end

@@ -5,12 +5,12 @@ class DownloadSong
     song_request = get_song_detail song_id
     %x{mkdir -p songs && youtube-dl --audio-format #{FORMAT} -o songs/#{song_request.file_id}.%\\(ext\\)s -x #{song_request.song_url}} unless File.exist? "songs/#{song_request.file_id}.#{FORMAT}"
     if File.exist? "songs/#{song_request.file_id}.#{FORMAT}"
-      song_request.status = 'Downloaded'
+      song_request.status = SongRequest::STATUS[:downloaded]
       if ENV['autopilot'] == 'true'
         song_request.enqueue!
       end
     else
-      song_request.status = 'Error'
+      song_request.status = SongRequest::STATUS[:error]
     end
     song_request.save!
   end
