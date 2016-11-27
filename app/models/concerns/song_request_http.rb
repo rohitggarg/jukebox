@@ -22,8 +22,16 @@ module SongRequestHttp
   end
 
   def enqueue_song song_id
-    url = "#{URL}#{song_id}/enqueue.json?admin_secret=#{Jukebox::Application.config.admin_secret}"
-    object = JSON.parse(Net::HTTP.get(URI.parse(url)))
+    uri = URI.parse("#{URL}#{song_id}/enqueue.json")
+    req = Net::HTTP::Put.new(uri)
+    req.set_form_data({admin_secret: Jukebox::Application.config.admin_secret})
+
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    object = JSON.parse(res.body)
+    puts object
     raise 'Not enqueued!' unless object['status'] == SongRequest::STATUS[:will_be_played]
   end
 end
