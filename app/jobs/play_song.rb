@@ -12,10 +12,10 @@ class PlaySong
   end
 
   def self.actually_play_song song
-    song.status = SongRequest::STATUS[:playing]
+    song.status = SongRequestHttp::STATUS[:playing]
     update song
     %x{#{player_command} songs/#{song.file_id}.#{FORMAT}}
-    song.status = SongRequest::STATUS[:played]
+    song.status = SongRequestHttp::STATUS[:played]
     update song
   end
 

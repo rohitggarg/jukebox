@@ -8,16 +8,16 @@ class DownloadSong
       populate_description song_request
       %x{mkdir -p songs && youtube-dl --audio-format #{FORMAT} -o songs/#{song_request.file_id}.%\\(ext\\)s -x #{song_request.song_url}} unless File.exist? "songs/#{song_request.file_id}.#{FORMAT}"
       if File.exist? "songs/#{song_request.file_id}.#{FORMAT}"
-        song_request.status = SongRequest::STATUS[:downloaded]
+        song_request.status = SongRequestHttp::STATUS[:downloaded]
         if ENV['autopilot'] == 'true'
           enqueue_song song_id
         end
       else
-        song_request.status = SongRequest::STATUS[:error]
+        song_request.status = SongRequestHttp::STATUS[:error]
       end
       update song_request
     rescue Exception => e
-      song_request.status = SongRequest::STATUS[:error]
+      song_request.status = SongRequestHttp::STATUS[:error]
       update song_request
       raise e
     end

@@ -1,4 +1,15 @@
 module SongRequestHttp
+
+  STATUS = {
+    new: 'N',
+    enqueued: 'A',
+    error: 'E',
+    will_be_played: 'W',
+    downloaded: 'D',
+    playing: 'P',
+    played: 'F'
+  }
+
   URL = "http://#{Jukebox::Application.config.master_server_config['servername']}/song_requests/"
 
   def update song_request
@@ -32,6 +43,6 @@ module SongRequestHttp
 
     object = JSON.parse(res.body)
     puts object
-    raise 'Not enqueued!' unless object['status'] == SongRequest::STATUS[:will_be_played]
+    raise 'Not enqueued!' unless object['status'] == STATUS[:will_be_played]
   end
 end
