@@ -1,0 +1,8 @@
+FROM ruby:alpine
+
+RUN apk --update add youtube-dl
+RUN apk --update add libpq tzdata
+
+ENV GEM_HOME /opt/app/vendor/bundle/ruby/2.4.0/
+WORKDIR /opt/app
+COPY . /opt/app
