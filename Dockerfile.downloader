@@ -7,3 +7,14 @@ RUN apk --update add libpq tzdata
 ENV GEM_HOME /opt/app/vendor/bundle/ruby/2.4.0/
 WORKDIR /opt/app
 COPY . /opt/app
+
+ENV AIRBRAKE_KEY key
+ENV AIRBRAKE_URL url
+ENV REDIS_URL redis://
+ENV RAILS_ENV production
+ENV DATABASE_URL postgres://db
+ENV JUKEBOX_ADMIN_SECRET mysupersecurepassword
+ENV QUEUE file.downloader
+
+VOLUME /opt/app/songs
+CMD ['rake', 'resque:work']
