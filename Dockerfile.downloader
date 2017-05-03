@@ -1,6 +1,7 @@
 FROM ruby:alpine
 
 RUN apk --update add youtube-dl
+RUN python /usr/lib/python2.7/site-packages/easy_install.py --upgrade youtube_dl
 RUN apk --update add libpq tzdata
 
 ENV GEM_HOME /opt/app/vendor/bundle/ruby/2.4.0/
