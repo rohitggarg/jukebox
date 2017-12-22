@@ -19,3 +19,4 @@ songs/*
 .idea*
 vendor/bundle
 *.rdb
+*.sh
