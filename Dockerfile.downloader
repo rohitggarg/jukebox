@@ -7,7 +7,7 @@ RUN apk add tzdata
 
 WORKDIR /opt/app
 
-ENV RAILS_ENV=production
+ENV RAILS_ENV production
 ENV AIRBRAKE_KEY key
 ENV AIRBRAKE_URL url
 ENV REDIS_URL redis://
@@ -23,4 +23,6 @@ COPY . /opt/app
 RUN mv /tmp/app/* /opt/app/
 
 VOLUME /opt/app/songs
+
+ENV DATABASE_URL sqlite3://db/downloader.sqlite3
 CMD bundle exec rake environment resque:work
