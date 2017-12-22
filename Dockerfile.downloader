@@ -3,9 +3,11 @@ FROM rohitggarg/ruby-dev
 RUN apk --update add youtube-dl sqlite-dev
 RUN python /usr/lib/python2.7/site-packages/easy_install.py --upgrade youtube_dl
 
-ENV GEM_HOME /opt/app/vendor/bundle/ruby/2.4.0/
+RUN apk add tzdata
+
 WORKDIR /opt/app
 
+ENV RAILS_ENV=production
 ENV AIRBRAKE_KEY key
 ENV AIRBRAKE_URL url
 ENV REDIS_URL redis://
@@ -13,9 +15,12 @@ ENV JUKEBOX_ADMIN_SECRET mysupersecurepassword
 ENV QUEUE file.downloader
 
 COPY Gemfile /opt/app/Gemfile
-RUN bundle install --without production
+RUN bundle install --without gui
+RUN ls -latrh
+RUN mkdir /tmp/app/ && mv /opt/app/* /tmp/app/
 
 COPY . /opt/app
+RUN mv /tmp/app/* /opt/app/
 
 VOLUME /opt/app/songs
-CMD ['rake', 'resque:work']
+CMD bundle exec rake environment resque:work
