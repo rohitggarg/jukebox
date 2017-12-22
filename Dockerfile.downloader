@@ -1,20 +1,21 @@
-FROM ruby:alpine
+FROM ruby:2.4
 
-RUN apk --update add youtube-dl
-RUN python /usr/lib/python2.7/site-packages/easy_install.py --upgrade youtube_dl
-RUN apk --update add libpq tzdata
+RUN apt-get update
+RUN apt-get -y install youtube-dl
 
 ENV GEM_HOME /opt/app/vendor/bundle/ruby/2.4.0/
 WORKDIR /opt/app
-COPY . /opt/app
 
 ENV AIRBRAKE_KEY key
 ENV AIRBRAKE_URL url
 ENV REDIS_URL redis://
-ENV RAILS_ENV production
-ENV DATABASE_URL postgres://db
 ENV JUKEBOX_ADMIN_SECRET mysupersecurepassword
 ENV QUEUE file.downloader
+
+COPY Gemfile /opt/app/Gemfile
+RUN bundle install --without production
+
+COPY . /opt/app
 
 VOLUME /opt/app/songs
 CMD ['rake', 'resque:work']
