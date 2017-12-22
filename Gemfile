@@ -6,6 +6,7 @@ gem 'airbrake', '~> 5.0'
 
 group :development do
   gem 'sqlite3'
+  gem 'duktape'
 end
 group :development, :test do
   gem 'byebug'
@@ -23,7 +24,6 @@ group :production do
   gem 'jbuilder', '~> 2.0'
   gem 'pg'
   # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'duktape'
   gem 'sdoc', '~> 0.4', group: :doc
 end
 
