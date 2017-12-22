@@ -19,7 +19,11 @@ RUN bundle install --without gui
 RUN ls -latrh
 RUN mkdir /tmp/app/ && mv /opt/app/* /tmp/app/
 
-COPY . /opt/app
+COPY app /opt/app/app
+COPY config /opt/app/config
+COPY lib /opt/app/lib
+COPY Rakefile /opt/app/Rakefile
+
 RUN mv /tmp/app/* /opt/app/
 
 VOLUME /opt/app/songs
